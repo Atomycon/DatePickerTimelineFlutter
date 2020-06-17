@@ -2,11 +2,12 @@ import 'package:date_picker_timeline/date_widget.dart';
 import 'package:date_picker_timeline/extra/color.dart';
 import 'package:date_picker_timeline/extra/style.dart';
 import 'package:date_picker_timeline/gestures/tap.dart';
-import 'package:date_picker_timeline/models/weather.dart';
+
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
-import 'models/weather.dart';
+import 'date_picker_timeline.dart';
+
 
 class DatePicker extends StatefulWidget {
   /// Start Date in case user wants to show past dates
@@ -38,7 +39,7 @@ class DatePicker extends StatefulWidget {
   final TextStyle dateTextStyle;
 
   /// TextStyle for the weatherTemp Value
-  final TextStyle tempTextStyle;
+  final TextStyle informerTextStyle;
 
   /// Current Selected Date
   final DateTime initialSelectedDate;
@@ -54,7 +55,7 @@ class DatePicker extends StatefulWidget {
   final String locale;
 
   ///a list of weather states for each day
-  final List<Weather> weather;
+  final List<IconInformer> iconInformers;
 
   DatePicker(this.startDate,
       {Key key,
@@ -64,14 +65,14 @@ class DatePicker extends StatefulWidget {
       this.monthTextStyle = defaultMonthTextStyle,
       this.dayTextStyle = defaultDayTextStyle,
       this.dateTextStyle = defaultDateTextStyle,
-      this.tempTextStyle = defaultTempTextStyle,
+      this.informerTextStyle = defaultInformerTextStyle,
       this.selectedTextColor = Colors.white,
       this.selectionColor = AppColors.defaultSelectionColor,
       this.initialSelectedDate,
       this.daysCount = 500,
       this.onDateChange,
       this.locale = "en_US",
-      this.weather})
+      this.iconInformers})
       : super(key: key);
 
   @override
@@ -86,9 +87,9 @@ class _DatePickerState extends State<DatePicker> {
   TextStyle selectedDateStyle;
   TextStyle selectedMonthStyle;
   TextStyle selectedDayStyle;
-  TextStyle selectedTempStyle;
+  TextStyle selectedInformerStyle;
 
-  List<Weather> weather;
+  List<IconInformer> iconInformers;
 
   @override
   void initState() {
@@ -96,7 +97,7 @@ class _DatePickerState extends State<DatePicker> {
     initializeDateFormatting(widget.locale, null);
     // Set initial Values
     _currentDate = widget.initialSelectedDate;
-    weather = widget.weather;
+    iconInformers = widget.iconInformers;
 
     if (widget.controller != null) {
       widget.controller.setDatePickerState(this);
@@ -105,7 +106,7 @@ class _DatePickerState extends State<DatePicker> {
     this.selectedDateStyle = createTextStyle(widget.dateTextStyle);
     this.selectedMonthStyle = createTextStyle(widget.monthTextStyle);
     this.selectedDayStyle = createTextStyle(widget.dayTextStyle);
-    this.selectedTempStyle = createTextStyle(widget.tempTextStyle);
+    this.selectedInformerStyle = createTextStyle(widget.informerTextStyle);
 
     super.initState();
   }
@@ -135,10 +136,10 @@ class _DatePickerState extends State<DatePicker> {
         scrollDirection: Axis.horizontal,
         controller: _controller,
         itemBuilder: (context, index) {
-          Weather currentWeather;
+          IconInformer currentIconInformer;
 
-          if (weather != null && weather.length > index) {
-            currentWeather = weather[index];
+          if (IconInformer != null && iconInformers.length > index) {
+            currentIconInformer = iconInformers[index];
           }
 
           // get the date object based on the index position
@@ -159,8 +160,8 @@ class _DatePickerState extends State<DatePicker> {
             dateTextStyle:
                 isSelected ? selectedDateStyle : widget.dateTextStyle,
             dayTextStyle: isSelected ? selectedDayStyle : widget.dayTextStyle,
-            tempTextStyle:
-                isSelected ? selectedTempStyle : widget.tempTextStyle,
+            informerTextStyle:
+                isSelected ? selectedInformerStyle : widget.informerTextStyle,
             width: widget.width,
             locale: widget.locale,
             selectionColor:
@@ -174,7 +175,7 @@ class _DatePickerState extends State<DatePicker> {
                 _currentDate = selectedDate;
               });
             },
-            weather: currentWeather,
+            iconInformer: currentIconInformer,
           );
         },
       ),

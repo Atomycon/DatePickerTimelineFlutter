@@ -6,30 +6,35 @@
 /// ***
 
 import 'package:date_picker_timeline/gestures/tap.dart';
-import 'package:date_picker_timeline/models/weather.dart';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+
+import 'date_picker_timeline.dart';
 
 class DateWidget extends StatelessWidget {
   final double width;
   final DateTime date;
-  final TextStyle monthTextStyle, dayTextStyle, dateTextStyle, tempTextStyle;
+  final TextStyle monthTextStyle,
+      dayTextStyle,
+      dateTextStyle,
+      informerTextStyle;
   final Color selectionColor;
   final DateSelectionCallback onDateSelected;
   final String locale;
-  final Weather weather;
+  final IconInformer iconInformer;
 
   DateWidget({
     @required this.date,
     @required this.monthTextStyle,
     @required this.dayTextStyle,
     @required this.dateTextStyle,
-    @required this.tempTextStyle,
+    @required this.informerTextStyle,
     @required this.selectionColor,
     this.width,
     this.onDateSelected,
     this.locale,
-    this.weather,
+    this.iconInformer,
   });
 
   @override
@@ -48,17 +53,17 @@ class DateWidget extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              if (weather != null)
+              if (iconInformer != null)
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: <Widget>[
                     Icon(
-                      weather.weatherIcon,
-                      size: tempTextStyle.fontSize,
+                      iconInformer.icon,
+                      size: informerTextStyle.fontSize,
                     ),
                     Text(
-                      weather.weatherTemp,
-                      style: tempTextStyle,
+                      iconInformer.informText,
+                      style: informerTextStyle,
                     ),
                   ],
                 ),

@@ -29,15 +29,11 @@ class _MyHomePageState extends State<MyHomePage> {
 
   DateTime _selectedValue = DateTime.now();
 
-  final List<Weather> weather = [
-    Weather(weatherIcon: Icons.wb_sunny, weatherTemp: "20°C"),
-    Weather(weatherIcon: Icons.wb_sunny, weatherTemp: "21°C"),
-    Weather(weatherIcon: Icons.wb_sunny, weatherTemp: "22°C"),
-    Weather(weatherIcon: Icons.wb_sunny, weatherTemp: "23°C"),
-    Weather(weatherIcon: Icons.wb_sunny, weatherTemp: "24°C"),
-    Weather(weatherIcon: Icons.wb_sunny, weatherTemp: "25C"),
-    Weather(weatherIcon: Icons.wb_sunny, weatherTemp: "26°C"),
-    Weather(weatherIcon: Icons.wb_sunny, weatherTemp: "27°C"),
+  final List<IconInformer> weather = [
+    IconInformer(icon: Icons.wb_sunny, informText: "20°C"),
+    IconInformer(icon: Icons.wb_sunny, informText: "21°C"),
+    IconInformer(icon: Icons.wb_sunny, informText: "22°C"),
+    IconInformer(icon: Icons.wb_sunny, informText: "23°C"),
   ];
 
   @override
@@ -75,14 +71,13 @@ class _MyHomePageState extends State<MyHomePage> {
                   initialSelectedDate: DateTime.now(),
                   selectionColor: Colors.black,
                   selectedTextColor: Colors.white,
-                  locale: 'de',
                   onDateChange: (date) {
                     // New date selected
                     setState(() {
                       _selectedValue = date;
                     });
                   },
-                  weather: weather,
+                  iconInformers: weather,
                 ),
               ),
             ],
