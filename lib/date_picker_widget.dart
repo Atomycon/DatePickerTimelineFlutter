@@ -2,8 +2,11 @@ import 'package:date_picker_timeline/date_widget.dart';
 import 'package:date_picker_timeline/extra/color.dart';
 import 'package:date_picker_timeline/extra/style.dart';
 import 'package:date_picker_timeline/gestures/tap.dart';
+import 'package:date_picker_timeline/models/weather.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
+
+import 'models/weather.dart';
 
 class DatePicker extends StatefulWidget {
   /// Start Date in case user wants to show past dates
@@ -34,6 +37,9 @@ class DatePicker extends StatefulWidget {
   /// TextStyle for the date Value
   final TextStyle dateTextStyle;
 
+  /// TextStyle for the weatherTemp Value
+  final TextStyle tempTextStyle;
+
   /// Current Selected Date
   final DateTime initialSelectedDate;
 
@@ -47,22 +53,26 @@ class DatePicker extends StatefulWidget {
   /// Locale for the calendar default: en_us
   final String locale;
 
-  DatePicker(
-    this.startDate, {
-    Key key,
-    this.width = 60,
-    this.height = 80,
-    this.controller,
-    this.monthTextStyle = defaultMonthTextStyle,
-    this.dayTextStyle = defaultDayTextStyle,
-    this.dateTextStyle = defaultDateTextStyle,
-    this.selectedTextColor = Colors.white,
-    this.selectionColor = AppColors.defaultSelectionColor,
-    this.initialSelectedDate,
-    this.daysCount = 500,
-    this.onDateChange,
-    this.locale = "en_US",
-  }) : super(key: key);
+  ///a list of weather states for each day
+  final List<Weather> weather;
+
+  DatePicker(this.startDate,
+      {Key key,
+      this.width = 60,
+      this.height = 80,
+      this.controller,
+      this.monthTextStyle = defaultMonthTextStyle,
+      this.dayTextStyle = defaultDayTextStyle,
+      this.dateTextStyle = defaultDateTextStyle,
+      this.tempTextStyle = defaultTempTextStyle,
+      this.selectedTextColor = Colors.white,
+      this.selectionColor = AppColors.defaultSelectionColor,
+      this.initialSelectedDate,
+      this.daysCount = 500,
+      this.onDateChange,
+      this.locale = "en_US",
+      this.weather})
+      : super(key: key);
 
   @override
   State<StatefulWidget> createState() => new _DatePickerState();
@@ -76,6 +86,9 @@ class _DatePickerState extends State<DatePicker> {
   TextStyle selectedDateStyle;
   TextStyle selectedMonthStyle;
   TextStyle selectedDayStyle;
+  TextStyle selectedTempStyle;
+
+  List<Weather> weather;
 
   @override
   void initState() {
@@ -83,6 +96,7 @@ class _DatePickerState extends State<DatePicker> {
     initializeDateFormatting(widget.locale, null);
     // Set initial Values
     _currentDate = widget.initialSelectedDate;
+    weather = widget.weather;
 
     if (widget.controller != null) {
       widget.controller.setDatePickerState(this);
@@ -91,6 +105,7 @@ class _DatePickerState extends State<DatePicker> {
     this.selectedDateStyle = createTextStyle(widget.dateTextStyle);
     this.selectedMonthStyle = createTextStyle(widget.monthTextStyle);
     this.selectedDayStyle = createTextStyle(widget.dayTextStyle);
+    this.selectedTempStyle = createTextStyle(widget.tempTextStyle);
 
     super.initState();
   }
@@ -120,6 +135,12 @@ class _DatePickerState extends State<DatePicker> {
         scrollDirection: Axis.horizontal,
         controller: _controller,
         itemBuilder: (context, index) {
+          Weather currentWeather;
+
+          if (weather != null && weather.length > index) {
+            currentWeather = weather[index];
+          }
+
           // get the date object based on the index position
           // if widget.startDate is null then use the initialDateValue
           DateTime date;
@@ -127,7 +148,8 @@ class _DatePickerState extends State<DatePicker> {
           date = new DateTime(_date.year, _date.month, _date.day);
 
           // Check if this date is the one that is currently selected
-          bool isSelected = _currentDate != null? _compareDate(date, _currentDate) : false;
+          bool isSelected =
+              _currentDate != null ? _compareDate(date, _currentDate) : false;
 
           // Return the Date Widget
           return DateWidget(
@@ -137,6 +159,8 @@ class _DatePickerState extends State<DatePicker> {
             dateTextStyle:
                 isSelected ? selectedDateStyle : widget.dateTextStyle,
             dayTextStyle: isSelected ? selectedDayStyle : widget.dayTextStyle,
+            tempTextStyle:
+                isSelected ? selectedTempStyle : widget.tempTextStyle,
             width: widget.width,
             locale: widget.locale,
             selectionColor:
@@ -150,6 +174,7 @@ class _DatePickerState extends State<DatePicker> {
                 _currentDate = selectedDate;
               });
             },
+            weather: currentWeather,
           );
         },
       ),

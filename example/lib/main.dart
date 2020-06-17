@@ -29,21 +29,26 @@ class _MyHomePageState extends State<MyHomePage> {
 
   DateTime _selectedValue = DateTime.now();
 
-
-  @override
-  void initState() {
-    super.initState();
-  }
+  final List<Weather> weather = [
+    Weather(weatherIcon: Icons.wb_sunny, weatherTemp: "20°C"),
+    Weather(weatherIcon: Icons.wb_sunny, weatherTemp: "21°C"),
+    Weather(weatherIcon: Icons.wb_sunny, weatherTemp: "22°C"),
+    Weather(weatherIcon: Icons.wb_sunny, weatherTemp: "23°C"),
+    Weather(weatherIcon: Icons.wb_sunny, weatherTemp: "24°C"),
+    Weather(weatherIcon: Icons.wb_sunny, weatherTemp: "25C"),
+    Weather(weatherIcon: Icons.wb_sunny, weatherTemp: "26°C"),
+    Weather(weatherIcon: Icons.wb_sunny, weatherTemp: "27°C"),
+  ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.replay),
-        onPressed: () {
-          _controller.animateToSelection();
-        },
-      ),
+        floatingActionButton: FloatingActionButton(
+          child: Icon(Icons.replay),
+          onPressed: () {
+            _controller.animateToSelection();
+          },
+        ),
         appBar: AppBar(
           title: Text(widget.title),
         ),
@@ -65,17 +70,19 @@ class _MyHomePageState extends State<MyHomePage> {
                 child: DatePicker(
                   DateTime.now().add(Duration(days: -3)),
                   width: 60,
-                  height: 80,
+                  height: 100,
                   controller: _controller,
                   initialSelectedDate: DateTime.now(),
                   selectionColor: Colors.black,
                   selectedTextColor: Colors.white,
+                  locale: 'de',
                   onDateChange: (date) {
                     // New date selected
                     setState(() {
                       _selectedValue = date;
                     });
                   },
+                  weather: weather,
                 ),
               ),
             ],
