@@ -65,8 +65,6 @@ class _MyHomePageState extends State<MyHomePage> {
               Container(
                 child: DatePicker(
                   DateTime.now().add(Duration(days: -3)),
-                  width: 60,
-                  height: 100,
                   controller: _controller,
                   initialSelectedDate: DateTime.now(),
                   selectionColor: Colors.black,
@@ -77,7 +75,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       _selectedValue = date;
                     });
                   },
-                  iconInformers: weather,
+                  iconInformers: null,
                 ),
               ),
             ],

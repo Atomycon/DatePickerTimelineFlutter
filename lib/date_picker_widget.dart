@@ -61,7 +61,7 @@ class DatePicker extends StatefulWidget {
   DatePicker(this.startDate,
       {Key key,
       this.width = 60,
-      this.height = 80,
+      this.height = 100,
       this.controller,
       this.monthTextStyle = defaultMonthTextStyle,
       this.dayTextStyle = defaultDayTextStyle,
@@ -74,7 +74,7 @@ class DatePicker extends StatefulWidget {
       this.onDateChange,
       this.locale = "en_US",
       this.iconInformers})
-      : hasIconInformer = (iconInformers != null && iconInformers.length >= 1),
+      : hasIconInformer = (iconInformers != null ? iconInformers.length >= 1 : false),
         super(key: key);
 
   @override
@@ -140,7 +140,7 @@ class _DatePickerState extends State<DatePicker> {
         itemBuilder: (context, index) {
           IconInformer currentIconInformer;
 
-          if (IconInformer != null && iconInformers.length > index) {
+          if (widget.hasIconInformer && iconInformers.length > index) {
             currentIconInformer = iconInformers[index];
           }
 
