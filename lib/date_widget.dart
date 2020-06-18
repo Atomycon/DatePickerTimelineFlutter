@@ -23,6 +23,7 @@ class DateWidget extends StatelessWidget {
   final DateSelectionCallback onDateSelected;
   final String locale;
   final IconInformer iconInformer;
+  final bool hasIconInformer;
 
   DateWidget({
     @required this.date,
@@ -31,6 +32,7 @@ class DateWidget extends StatelessWidget {
     @required this.dateTextStyle,
     @required this.informerTextStyle,
     @required this.selectionColor,
+    @required this.hasIconInformer,
     this.width,
     this.onDateSelected,
     this.locale,
@@ -66,7 +68,9 @@ class DateWidget extends StatelessWidget {
                       style: informerTextStyle,
                     ),
                   ],
-                ),
+                )
+              else if (hasIconInformer)
+                SizedBox(height: informerTextStyle.fontSize,),
               Text(
                   new DateFormat("MMM", locale)
                       .format(date)

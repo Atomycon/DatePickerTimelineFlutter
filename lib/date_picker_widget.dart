@@ -8,7 +8,6 @@ import 'package:intl/date_symbol_data_local.dart';
 
 import 'date_picker_timeline.dart';
 
-
 class DatePicker extends StatefulWidget {
   /// Start Date in case user wants to show past dates
   /// If not provided calendar will start from the initialSelectedDate
@@ -57,6 +56,8 @@ class DatePicker extends StatefulWidget {
   ///a list of weather states for each day
   final List<IconInformer> iconInformers;
 
+  final bool hasIconInformer;
+
   DatePicker(this.startDate,
       {Key key,
       this.width = 60,
@@ -73,7 +74,8 @@ class DatePicker extends StatefulWidget {
       this.onDateChange,
       this.locale = "en_US",
       this.iconInformers})
-      : super(key: key);
+      : hasIconInformer = (iconInformers != null && iconInformers.length >= 1),
+        super(key: key);
 
   @override
   State<StatefulWidget> createState() => new _DatePickerState();
@@ -176,6 +178,7 @@ class _DatePickerState extends State<DatePicker> {
               });
             },
             iconInformer: currentIconInformer,
+            hasIconInformer: widget.hasIconInformer,
           );
         },
       ),
