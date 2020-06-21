@@ -20,8 +20,3 @@ const TextStyle defaultDayTextStyle = TextStyle(
   fontWeight: FontWeight.w500,
 );
 
-const TextStyle defaultInformerTextStyle = TextStyle(
-  color: AppColors.defaultInformerColor,
-  fontSize: Dimen.informerTextSize,
-  fontWeight: FontWeight.w500,
-);

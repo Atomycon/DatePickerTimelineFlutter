@@ -29,11 +29,45 @@ class _MyHomePageState extends State<MyHomePage> {
 
   DateTime _selectedValue = DateTime.now();
 
-  final List<IconInformer> weather = [
-    IconInformer(icon: Icons.wb_sunny, informText: "20°C"),
-    IconInformer(icon: Icons.wb_sunny, informText: "21°C"),
-    IconInformer(icon: Icons.wb_sunny, informText: "22°C"),
-    IconInformer(icon: Icons.wb_sunny, informText: "23°C"),
+  static final informerHeight = 11.0;
+  final List<List<Widget>> weather = [
+    for (int i = 0; i < 10; i++)
+      [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Icon(
+              Icons.wb_sunny,
+              color: Colors.yellow,
+              size: informerHeight,
+            ),
+            Text(
+              "20°C",
+              style: TextStyle(
+                color: Colors.yellow,
+                fontSize: informerHeight,
+              ),
+            ),
+          ],
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Icon(
+              Icons.ac_unit,
+              color: Colors.blue,
+              size: informerHeight,
+            ),
+            Text(
+              "-10°C",
+              style: TextStyle(
+                color: Colors.blue,
+                fontSize: informerHeight,
+              ),
+            ),
+          ],
+        ),
+      ],
   ];
 
   @override
@@ -64,18 +98,17 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               Container(
                 child: DatePicker(
-                  DateTime.now().add(Duration(days: -3)),
+                  DateTime.now(),
                   controller: _controller,
                   initialSelectedDate: DateTime.now(),
-                  selectionColor: Colors.black,
-                  selectedTextColor: Colors.white,
                   onDateChange: (date) {
                     // New date selected
                     setState(() {
                       _selectedValue = date;
                     });
                   },
-                  iconInformers: null,
+                  informers: weather,
+                  informerHeight: informerHeight,
                 ),
               ),
             ],

@@ -10,33 +10,28 @@ import 'package:date_picker_timeline/gestures/tap.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-import 'date_picker_timeline.dart';
-
 class DateWidget extends StatelessWidget {
   final double width;
   final DateTime date;
-  final TextStyle monthTextStyle,
-      dayTextStyle,
-      dateTextStyle,
-      informerTextStyle;
-  final Color selectionColor;
+  final TextStyle monthTextStyle, dayTextStyle, dateTextStyle;
+
+  final Color backgroundColor;
   final DateSelectionCallback onDateSelected;
   final String locale;
-  final IconInformer iconInformer;
-  final bool hasIconInformer;
+  final Widget informer;
+  final double informerHeight;
 
   DateWidget({
     @required this.date,
     @required this.monthTextStyle,
     @required this.dayTextStyle,
     @required this.dateTextStyle,
-    @required this.informerTextStyle,
-    @required this.selectionColor,
-    @required this.hasIconInformer,
+    @required this.backgroundColor,
+    @required this.informerHeight,
     this.width,
     this.onDateSelected,
     this.locale,
-    this.iconInformer,
+    this.informer,
   });
 
   @override
@@ -47,7 +42,7 @@ class DateWidget extends StatelessWidget {
         margin: EdgeInsets.all(3.0),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.all(Radius.circular(8.0)),
-          color: selectionColor,
+          color: backgroundColor,
         ),
         child: Padding(
           padding: EdgeInsets.all(8),
@@ -55,22 +50,12 @@ class DateWidget extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              if (iconInformer != null)
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: <Widget>[
-                    Icon(
-                      iconInformer.icon,
-                      size: informerTextStyle.fontSize,
-                    ),
-                    Text(
-                      iconInformer.informText,
-                      style: informerTextStyle,
-                    ),
-                  ],
-                )
-              else if (hasIconInformer)
-                SizedBox(height: informerTextStyle.fontSize,),
+              if (informer != null)
+                informer
+              else
+                SizedBox(
+                  height: informerHeight,
+                ),
               Text(
                   new DateFormat("MMM", locale)
                       .format(date)

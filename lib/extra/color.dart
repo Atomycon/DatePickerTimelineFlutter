@@ -11,7 +11,7 @@ class AppColors {
 
   static const Color defaultDateColor = Colors.black;
   static const Color defaultDayColor = Colors.black;
-  static const Color defaultInformerColor = Colors.black;
   static const Color defaultMonthColor = Colors.black;
-  static const Color defaultSelectionColor = Color(0x30000000);
+  static const Color defaultSelectedBackgroundColor = Color(0x30000000);
+  static const Color defaultUnselectedBackgroundColor = Colors.transparent;
 }

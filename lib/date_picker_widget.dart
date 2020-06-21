@@ -6,8 +6,6 @@ import 'package:date_picker_timeline/gestures/tap.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
-import 'date_picker_timeline.dart';
-
 class DatePicker extends StatefulWidget {
   /// Start Date in case user wants to show past dates
   /// If not provided calendar will start from the initialSelectedDate
@@ -26,7 +24,13 @@ class DatePicker extends StatefulWidget {
   final Color selectedTextColor;
 
   /// Background color for the selector
-  final Color selectionColor;
+  final Color selectedBackgroundColor;
+
+  /// Text color for the unselected Dates
+  final Color unselectedTextColor;
+
+  /// Background color for the unselected dates
+  final Color unselectedBackgroundColor;
 
   /// TextStyle for Month Value
   final TextStyle monthTextStyle;
@@ -36,9 +40,6 @@ class DatePicker extends StatefulWidget {
 
   /// TextStyle for the date Value
   final TextStyle dateTextStyle;
-
-  /// TextStyle for the weatherTemp Value
-  final TextStyle informerTextStyle;
 
   /// Current Selected Date
   final DateTime initialSelectedDate;
@@ -53,29 +54,33 @@ class DatePicker extends StatefulWidget {
   /// Locale for the calendar default: en_us
   final String locale;
 
-  ///a list of weather states for each day
-  final List<IconInformer> iconInformers;
+  ///a list of Widgets that contain important information about the current date, the information is applied starting form the [startDate].
+  ///Provide two widgets for each date, the first will be shown if the date is not selected, the second widget in the list is shown when the date is selected
+  final List<List<Widget>> informers;
 
-  final bool hasIconInformer;
+  ///provide the height of a informer widget to align dates with no informer with the once that have one
+  final double informerHeight;
 
-  DatePicker(this.startDate,
-      {Key key,
-      this.width = 60,
-      this.height = 100,
-      this.controller,
-      this.monthTextStyle = defaultMonthTextStyle,
-      this.dayTextStyle = defaultDayTextStyle,
-      this.dateTextStyle = defaultDateTextStyle,
-      this.informerTextStyle = defaultInformerTextStyle,
-      this.selectedTextColor = Colors.white,
-      this.selectionColor = AppColors.defaultSelectionColor,
-      this.initialSelectedDate,
-      this.daysCount = 500,
-      this.onDateChange,
-      this.locale = "en_US",
-      this.iconInformers})
-      : hasIconInformer = (iconInformers != null ? iconInformers.length >= 1 : false),
-        super(key: key);
+  DatePicker(
+    this.startDate, {
+    Key key,
+    this.width = 60,
+    this.height = 100,
+    this.controller,
+    this.monthTextStyle = defaultMonthTextStyle,
+    this.dayTextStyle = defaultDayTextStyle,
+    this.dateTextStyle = defaultDateTextStyle,
+    this.selectedTextColor = Colors.white,
+    this.selectedBackgroundColor = AppColors.defaultSelectedBackgroundColor,
+    this.unselectedTextColor = Colors.black,
+    this.unselectedBackgroundColor = AppColors.defaultUnselectedBackgroundColor,
+    this.initialSelectedDate,
+    this.daysCount = 500,
+    this.onDateChange,
+    this.locale = "en_US",
+    this.informers,
+    this.informerHeight = 0,
+  }) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => new _DatePickerState();
@@ -89,9 +94,10 @@ class _DatePickerState extends State<DatePicker> {
   TextStyle selectedDateStyle;
   TextStyle selectedMonthStyle;
   TextStyle selectedDayStyle;
-  TextStyle selectedInformerStyle;
 
-  List<IconInformer> iconInformers;
+  TextStyle unselectedDateStyle;
+  TextStyle unselectedMonthStyle;
+  TextStyle unselectedDayStyle;
 
   @override
   void initState() {
@@ -99,26 +105,34 @@ class _DatePickerState extends State<DatePicker> {
     initializeDateFormatting(widget.locale, null);
     // Set initial Values
     _currentDate = widget.initialSelectedDate;
-    iconInformers = widget.iconInformers;
 
     if (widget.controller != null) {
       widget.controller.setDatePickerState(this);
     }
 
-    this.selectedDateStyle = createTextStyle(widget.dateTextStyle);
-    this.selectedMonthStyle = createTextStyle(widget.monthTextStyle);
-    this.selectedDayStyle = createTextStyle(widget.dayTextStyle);
-    this.selectedInformerStyle = createTextStyle(widget.informerTextStyle);
+    this.selectedDateStyle =
+        createTextStyle(widget.dateTextStyle, widget.selectedTextColor);
+    this.selectedMonthStyle =
+        createTextStyle(widget.monthTextStyle, widget.selectedTextColor);
+    this.selectedDayStyle =
+        createTextStyle(widget.dayTextStyle, widget.selectedTextColor);
+
+    this.unselectedDateStyle =
+        createTextStyle(widget.dateTextStyle, widget.unselectedTextColor);
+    this.unselectedMonthStyle =
+        createTextStyle(widget.monthTextStyle, widget.unselectedTextColor);
+    this.unselectedDayStyle =
+        createTextStyle(widget.dayTextStyle, widget.unselectedTextColor);
 
     super.initState();
   }
 
-  /// This will return a text style for the Selected date Text Values
+  /// This will return a text style for the selected or unselected date Text Values
   /// the only change will be the color provided
-  TextStyle createTextStyle(TextStyle style) {
-    if (widget.selectedTextColor != null) {
+  TextStyle createTextStyle(TextStyle style, Color textColor) {
+    if (textColor != null) {
       return TextStyle(
-        color: widget.selectedTextColor,
+        color: textColor,
         fontSize: style.fontSize,
         fontWeight: style.fontWeight,
         fontFamily: style.fontFamily,
@@ -138,10 +152,12 @@ class _DatePickerState extends State<DatePicker> {
         scrollDirection: Axis.horizontal,
         controller: _controller,
         itemBuilder: (context, index) {
-          IconInformer currentIconInformer;
+          Widget unSelectedInformer;
+          Widget selectedInformer;
 
-          if (widget.hasIconInformer && iconInformers.length > index) {
-            currentIconInformer = iconInformers[index];
+          if (widget.informers != null && widget.informers.length > index) {
+            unSelectedInformer = widget.informers[index][0];
+            selectedInformer = widget.informers[index][1];
           }
 
           // get the date object based on the index position
@@ -158,16 +174,14 @@ class _DatePickerState extends State<DatePicker> {
           return DateWidget(
             date: date,
             monthTextStyle:
-                isSelected ? selectedMonthStyle : widget.monthTextStyle,
-            dateTextStyle:
-                isSelected ? selectedDateStyle : widget.dateTextStyle,
-            dayTextStyle: isSelected ? selectedDayStyle : widget.dayTextStyle,
-            informerTextStyle:
-                isSelected ? selectedInformerStyle : widget.informerTextStyle,
+                isSelected ? selectedMonthStyle : unselectedMonthStyle,
+            dateTextStyle: isSelected ? selectedDateStyle : unselectedDateStyle,
+            dayTextStyle: isSelected ? selectedDayStyle : unselectedDayStyle,
             width: widget.width,
             locale: widget.locale,
-            selectionColor:
-                isSelected ? widget.selectionColor : Colors.transparent,
+            backgroundColor: isSelected
+                ? widget.selectedBackgroundColor
+                : widget.unselectedBackgroundColor,
             onDateSelected: (selectedDate) {
               // A date is selected
               if (widget.onDateChange != null) {
@@ -177,8 +191,8 @@ class _DatePickerState extends State<DatePicker> {
                 _currentDate = selectedDate;
               });
             },
-            iconInformer: currentIconInformer,
-            hasIconInformer: widget.hasIconInformer,
+            informer: isSelected ? selectedInformer : unSelectedInformer,
+            informerHeight: widget.informerHeight,
           );
         },
       ),
@@ -212,7 +226,7 @@ class DatePickerController {
 
   /// This function will animate the Timeline to the currently selected Date
   void animateToSelection(
-      {duration = const Duration(milliseconds: 500), curve = Curves.linear}) {
+      {duration = const Duration(milliseconds: 300), curve = Curves.linear}) {
     assert(_datePickerState != null,
         'DatePickerController is not attached to any DatePicker View.');
 
