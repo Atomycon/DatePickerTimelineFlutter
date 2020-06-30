@@ -18,8 +18,8 @@ class DateWidget extends StatelessWidget {
   final Color backgroundColor;
   final DateSelectionCallback onDateSelected;
   final String locale;
-  final Widget informer;
-  final double informerHeight;
+  final Widget dateInfo;
+  final double dateInfoHeight;
 
   DateWidget({
     @required this.date,
@@ -27,11 +27,11 @@ class DateWidget extends StatelessWidget {
     @required this.dayTextStyle,
     @required this.dateTextStyle,
     @required this.backgroundColor,
-    @required this.informerHeight,
+    @required this.dateInfoHeight,
     this.width,
     this.onDateSelected,
     this.locale,
-    this.informer,
+    this.dateInfo,
   });
 
   @override
@@ -50,11 +50,11 @@ class DateWidget extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              if (informer != null)
-                informer
+              if (dateInfo != null)
+                dateInfo
               else
                 SizedBox(
-                  height: informerHeight,
+                  height: dateInfoHeight,
                 ),
               Text(
                   new DateFormat("MMM", locale)

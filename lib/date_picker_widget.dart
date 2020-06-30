@@ -54,18 +54,21 @@ class DatePicker extends StatefulWidget {
   /// Locale for the calendar default: en_us
   final String locale;
 
-  ///a list of Widgets that contain important information about the current date, the information is applied starting form the [startDate].
-  ///Provide two widgets for each date, the first will be shown if the date is not selected, the second widget in the list is shown when the date is selected
-  final List<List<Widget>> informers;
+  /// Displays the widget above the date if the date is not selected
+  final Map<DateTime, Widget> unselectedDateInfo;
 
-  ///provide the height of a informer widget to align dates with no informer with the once that have one
-  final double informerHeight;
+  /// Displays the widget above the date if the date is selected
+  final Map<DateTime, Widget> selectedDateInfo;
+
+  /// Height above the date if no date info is shown
+  /// (e.g. to place the date uniformly next to each other)
+  final double dateInfoHeight;
 
   DatePicker(
     this.startDate, {
     Key key,
     this.width = 60,
-    this.height = 100,
+    this.height = 80,
     this.controller,
     this.monthTextStyle = defaultMonthTextStyle,
     this.dayTextStyle = defaultDayTextStyle,
@@ -78,8 +81,9 @@ class DatePicker extends StatefulWidget {
     this.daysCount = 500,
     this.onDateChange,
     this.locale = "en_US",
-    this.informers,
-    this.informerHeight = 0,
+    this.unselectedDateInfo,
+    this.selectedDateInfo,
+    this.dateInfoHeight = 0,
   }) : super(key: key);
 
   @override
@@ -98,6 +102,9 @@ class _DatePickerState extends State<DatePicker> {
   TextStyle unselectedDateStyle;
   TextStyle unselectedMonthStyle;
   TextStyle unselectedDayStyle;
+
+  Map<DateTime, Widget> unselectedDateInfo;
+  Map<DateTime, Widget> selectedDateInfo;
 
   @override
   void initState() {
@@ -124,6 +131,15 @@ class _DatePickerState extends State<DatePicker> {
     this.unselectedDayStyle =
         createTextStyle(widget.dayTextStyle, widget.unselectedTextColor);
 
+    //format the DateInfo maps keys to avoid matching problems due to diffrent daytimes
+    unselectedDateInfo = widget.unselectedDateInfo != null
+        ? widget.unselectedDateInfo.map((key, value) =>
+            MapEntry(DateTime(key.year, key.month, key.day), value))
+        : null;
+    selectedDateInfo = widget.selectedDateInfo != null
+        ? widget.selectedDateInfo.map((key, value) =>
+            MapEntry(DateTime(key.year, key.month, key.day), value))
+        : null;
     super.initState();
   }
 
@@ -152,24 +168,14 @@ class _DatePickerState extends State<DatePicker> {
         scrollDirection: Axis.horizontal,
         controller: _controller,
         itemBuilder: (context, index) {
-          Widget unSelectedInformer;
-          Widget selectedInformer;
-
-          if (widget.informers != null && widget.informers.length > index) {
-            unSelectedInformer = widget.informers[index][0];
-            selectedInformer = widget.informers[index][1];
-          }
-
           // get the date object based on the index position
           // if widget.startDate is null then use the initialDateValue
           DateTime date;
           DateTime _date = widget.startDate.add(Duration(days: index));
-          date = new DateTime(_date.year, _date.month, _date.day);
-
+          date = DateTime(_date.year, _date.month, _date.day);
           // Check if this date is the one that is currently selected
           bool isSelected =
               _currentDate != null ? _compareDate(date, _currentDate) : false;
-
           // Return the Date Widget
           return DateWidget(
             date: date,
@@ -191,8 +197,10 @@ class _DatePickerState extends State<DatePicker> {
                 _currentDate = selectedDate;
               });
             },
-            informer: isSelected ? selectedInformer : unSelectedInformer,
-            informerHeight: widget.informerHeight,
+            dateInfo: isSelected
+                ? selectedDateInfo != null ? selectedDateInfo[date] : null
+                : unselectedDateInfo != null ? unselectedDateInfo[date] : null,
+            dateInfoHeight: widget.dateInfoHeight,
           );
         },
       ),

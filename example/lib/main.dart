@@ -29,46 +29,52 @@ class _MyHomePageState extends State<MyHomePage> {
 
   DateTime _selectedValue = DateTime.now();
 
-  static final informerHeight = 11.0;
-  final List<List<Widget>> weather = [
+  static final dateInfoHeight = 11.0;
+  final Map<DateTime, Widget> unselectedWeather = {
     for (int i = 0; i < 10; i++)
-      [
-        Row(
+      ...{
+        DateTime.now().add(Duration(days: i)): Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Icon(
               Icons.wb_sunny,
               color: Colors.yellow,
-              size: informerHeight,
+              size: dateInfoHeight,
             ),
             Text(
               "20°C",
               style: TextStyle(
                 color: Colors.yellow,
-                fontSize: informerHeight,
+                fontSize: dateInfoHeight,
               ),
             ),
           ],
         ),
-        Row(
+      }
+  };
+
+  final Map<DateTime, Widget> selectedWeather = {
+    for (int i = 0; i < 10; i++)
+      ...{
+        DateTime.now().add(Duration(days: i)): Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Icon(
               Icons.ac_unit,
               color: Colors.blue,
-              size: informerHeight,
+              size: dateInfoHeight,
             ),
             Text(
-              "-10°C",
+              "10°C",
               style: TextStyle(
                 color: Colors.blue,
-                fontSize: informerHeight,
+                fontSize: dateInfoHeight,
               ),
             ),
           ],
         ),
-      ],
-  ];
+      }
+  };
 
   @override
   Widget build(BuildContext context) {
@@ -99,6 +105,7 @@ class _MyHomePageState extends State<MyHomePage> {
               Container(
                 child: DatePicker(
                   DateTime.now(),
+                  height: 90,
                   controller: _controller,
                   initialSelectedDate: DateTime.now(),
                   onDateChange: (date) {
@@ -107,8 +114,9 @@ class _MyHomePageState extends State<MyHomePage> {
                       _selectedValue = date;
                     });
                   },
-                  informers: weather,
-                  informerHeight: informerHeight,
+                  selectedDateInfo: selectedWeather,
+                  unselectedDateInfo: unselectedWeather,
+                  dateInfoHeight: dateInfoHeight,
                 ),
               ),
             ],
